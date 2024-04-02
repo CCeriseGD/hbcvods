@@ -56,6 +56,7 @@ h1 {
     width: 100%;
     box-sizing: border-box;
     border-left: 1px solid #38383f;
+    background-color: #18181b;
     display: grid;
     grid-template-rows: max-content calc(100vh - 150px);
     z-index: 9;
