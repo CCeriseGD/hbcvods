@@ -49,6 +49,7 @@
     let chunks = 1
     let currentChunk = 1
     let loadingnext = false
+    let nextchunk
 
     const highlightsheet = new CSSStyleSheet()
     function messageTimestamp(msgid, seconds) {
@@ -116,14 +117,15 @@
         xhr.onload = function(oEvent) {
             var blob = new Blob([oEvent.target.response], {type: "video/mp4"});
 
-            if (loadingnext) {
+            if (loadingnext == currentChunk + 1) {
                 console.log("next chunk loaded")
-                currentChunk++
                 loadingnext = false
+                nextchunk = URL.createObjectURL(blob)/*
+                currentChunk++
                 let cur = video.currentTime
                 video.src = URL.createObjectURL(blob);
                 video.currentTime = cur - chunklen
-                video.play()
+                video.play()*/
             }
         };
 
@@ -239,11 +241,25 @@
 
         document.getElementById("time").innerText = string
 
+
         let ch = Math.ceil(seconds / chunklen)
-        if (ch > currentChunk && !loadingnext) {
+        if (ch == currentChunk && !nextchunk && !loadingnext) {
             console.log("loading next chunk")
-            loadingnext = true
-            preload(ch)
+            loadingnext = ch + 1
+            preload(ch + 1)
+        }
+        if (ch > currentChunk) {
+            loadingnext = false
+            currentChunk++
+            let cur = video.currentTime
+            if (nextchunk) {
+                video.src = nextchunk;
+            } else {
+                video.src = "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/vods/" + id + "_" + ch + ".mp4"
+            }
+            video.currentTime = cur - chunklen
+            video.play()
+            nextchunk = null
         }
     });
 /*
