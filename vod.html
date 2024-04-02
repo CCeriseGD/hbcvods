@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<h1 style="background-color: #18181b"><a href=""><img src="twitchbreab.svg" width=60></a>HBC Twitch VOD backups</h1>
+<h1 style="background-color: #18181b"><a href="/hbcvods"><img src="twitchbreab.svg" width=60></a>HBC Twitch VOD backups</h1>
 <div id="titlewrapper">
     <h2 id="title"></h2>
     <div id="vodwrapper">
@@ -43,6 +43,9 @@
     const hl = params.get("hl")
     const colors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
     let pickedColors = {};
+    const chat = document.getElementById("chat")
+    let chatjson = {};
+    let lastchat = null
 
     let chunklen = 300
     let length = 3600
@@ -57,6 +60,17 @@
         highlightsheet.replaceSync("#" + msgid + " {background-color: #35353b}")
         //document.getElementById("vod").currentTime = seconds
         skipto(seconds)
+    }
+
+    function getchat(seconds) {
+        chat.innerHTML = ""
+        for (let i = seconds - 1; i >= 0; i--) {
+            chat.innerHTML = chatjson[i] + chat.innerHTML
+            if (chat.children.length > 100) {
+                break
+            }
+        }
+        lastchat = seconds
     }
 
     var client = new XMLHttpRequest();
@@ -79,23 +93,25 @@
                 chunks = Math.ceil(length / chunklen)
                 
                 //console.log(badges);
-                /*
+                
                 var loadchat = new XMLHttpRequest();
-                loadchat.open('GET', "chat/" + id + ".html");
+                loadchat.open('GET', "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/chat/" + id + ".json");
                 loadchat.onreadystatechange = function() {
                     if (loadchat.readyState == 4) {
-                        const chat = document.getElementById("chat")
                         if (loadchat.status == 200) {
+                            chatjson = JSON.parse(loadchat.responseText)
+                            getchat(timestamp)
+                            /*
                             chat.innerHTML = loadchat.responseText
                             if (document.getElementById(hl)) {
                                 document.getElementById(hl).scrollIntoView({behavior: "smooth", block: "center"})
-                            }
+                            }*/
                         } else {
                             chat.innerText = "Error: " + loadchat.status
                         }
                     }
                 }
-                loadchat.send()*/
+                loadchat.send()
             } else {
                 document.getElementById("title").innerText = "Error: " + client.status;
                 document.getElementById("vod").style.display = "none";
@@ -260,6 +276,9 @@
             video.currentTime = cur - chunklen
             video.play()
             nextchunk = null
+        }
+        if (Math.floor(seconds) > lastchat) {
+            getchat(Math.floor(seconds))
         }
     });
 /*
