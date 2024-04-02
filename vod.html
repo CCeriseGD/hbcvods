@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<h1 style="background-color: #18181b"><a href="/"><img src="twitchbreab.svg" width=60></a>HBC Twitch VOD backups</h1>
+<h1 style="background-color: #18181b"><a href=""><img src="twitchbreab.svg" width=60></a>HBC Twitch VOD backups</h1>
 <div id="titlewrapper">
     <h2 id="title"></h2>
     <div id="vodwrapper">
@@ -59,7 +59,7 @@
     }
 
     var client = new XMLHttpRequest();
-    client.open('GET', "metadata/" + id + ".json");
+    client.open('GET', "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/metadata/" + id + ".json");
     client.onreadystatechange = function() {
         if (client.readyState == 4) {
             if (client.status == 200) {
@@ -71,14 +71,14 @@
                 if (currentChunk < 1) {
                     currentChunk = 1
                 }
-                document.getElementById("vod").src = "vods/" + id + "_" + currentChunk + ".mp4"
+                document.getElementById("vod").src = "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/vods/" + id + "_" + currentChunk + ".mp4"
                 document.getElementById("vod").currentTime = timestamp;
 
                 length = metadata.length
                 chunks = Math.ceil(length / chunklen)
                 
                 //console.log(badges);
-                
+                /*
                 var loadchat = new XMLHttpRequest();
                 loadchat.open('GET', "chat/" + id + ".html");
                 loadchat.onreadystatechange = function() {
@@ -94,7 +94,7 @@
                         }
                     }
                 }
-                loadchat.send()
+                loadchat.send()*/
             } else {
                 document.getElementById("title").innerText = "Error: " + client.status;
                 document.getElementById("vod").style.display = "none";
@@ -110,7 +110,7 @@
     // https://stackoverflow.com/a/28839954
     function preload(ch) {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "vods/" + id + "_" + ch + ".mp4", true);
+        xhr.open("GET", "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/vods/" + id + "_" + ch + ".mp4", true);
         xhr.responseType = "arraybuffer";
 
         xhr.onload = function(oEvent) {
@@ -266,7 +266,7 @@
         let ch = Math.ceil(time / chunklen)
         if (ch != currentChunk) {
             currentChunk = ch
-            video.src = "vods/" + id + "_" + currentChunk + ".mp4"
+            video.src = "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/vods/" + id + "_" + currentChunk + ".mp4"
             video.currentTime = time - (currentChunk - 1) * chunklen
         } else {
             video.currentTime = time - (currentChunk - 1) * chunklen
