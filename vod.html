@@ -19,6 +19,7 @@
                 </div>
                 <div id="progress-bar">
                     <div id="time">0:00</div>
+                    <div id="total">--:--:--</div>
                     <div id="progress-empty">
                         <div id="progress-full">
                             <div id="cicle"></div>
@@ -93,6 +94,25 @@
 
                 length = metadata.length
                 chunks = Math.ceil(length / chunklen)
+
+                let string = ""
+                const hours = Math.floor(length / 3600)
+                let displaySeconds = length - hours * 3600
+                const minutes = Math.floor(displaySeconds / 60)
+                displaySeconds = displaySeconds - minutes * 60
+                if (hours > 0) {
+                    string = string + hours + ":"
+                    if (minutes < 10) {
+                        string = string + 0
+                    }
+                }
+                string = string + minutes + ":"
+                if (displaySeconds < 10) {
+                    string = string + 0
+                }
+                string = string + Math.floor(displaySeconds)
+
+                document.getElementById("total").innerText = string
                 
                 //console.log(badges);
                 

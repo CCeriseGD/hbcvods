@@ -270,3 +270,9 @@ h1 img {
     left: 0;
     display: inline-block
 }
+#total {
+    position: absolute;
+    top: -15px;
+    right: 0;
+    display: inline-block
+}
