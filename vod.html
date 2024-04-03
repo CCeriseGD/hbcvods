@@ -47,6 +47,7 @@
     const chat = document.getElementById("chat")
     let chatjson = {};
     let lastchat = null
+    let vodurl = "https://raw.githubusercontent.com/HBC-VOD-archive-bot/" + id + "/master/"
 
     let chunklen = 300
     let length = 3600
@@ -77,7 +78,7 @@
     }
 
     var client = new XMLHttpRequest();
-    client.open('GET', "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/metadata/" + id + ".json");
+    client.open('GET', vodurl + "metadata.json");
     client.onreadystatechange = function() {
         if (client.readyState == 4) {
             if (client.status == 200) {
@@ -89,7 +90,7 @@
                 if (currentChunk < 1) {
                     currentChunk = 1
                 }
-                document.getElementById("vod").src = "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/vods/" + id + "_" + currentChunk + ".mp4"
+                document.getElementById("vod").src = vodurl + currentChunk + ".mp4"
                 document.getElementById("vod").currentTime = timestamp;
 
                 length = metadata.length
@@ -117,7 +118,7 @@
                 //console.log(badges);
                 
                 var loadchat = new XMLHttpRequest();
-                loadchat.open('GET', "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/chat/" + id + ".json");
+                loadchat.open('GET', vodurl + "chat.json");
                 loadchat.onreadystatechange = function() {
                     if (loadchat.readyState == 4) {
                         if (loadchat.status == 200) {
@@ -149,7 +150,7 @@
     // https://stackoverflow.com/a/28839954
     function preload(ch) {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/vods/" + id + "_" + ch + ".mp4", true);
+        xhr.open("GET", vodurl + ch + ".mp4", true);
         xhr.responseType = "arraybuffer";
 
         xhr.onload = function(oEvent) {
@@ -293,7 +294,7 @@
             if (nextchunk) {
                 video.src = nextchunk;
             } else {
-                video.src = "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/vods/" + id + "_" + ch + ".mp4"
+                video.src = vodurl+ ch + ".mp4"
             }
             video.currentTime = cur - chunklen
             video.play()
@@ -323,7 +324,7 @@
         let ch = Math.ceil(time / chunklen)
         if (ch != currentChunk) {
             currentChunk = ch
-            video.src = "https://raw.githubusercontent.com/CCeriseGD/hbcvodsfiles/master/vods/" + id + "_" + currentChunk + ".mp4"
+            video.src = vodurl + currentChunk + ".mp4"
             video.currentTime = time - (currentChunk - 1) * chunklen
         } else {
             video.currentTime = time - (currentChunk - 1) * chunklen
