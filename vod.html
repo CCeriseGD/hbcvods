@@ -331,6 +331,7 @@
             currentChunk = ch
             video.src = vodurl + currentChunk + ".mp4"
             video.currentTime = time - (currentChunk - 1) * chunklen
+            nextchunk = false
         } else {
             video.currentTime = time - (currentChunk - 1) * chunklen
         }
