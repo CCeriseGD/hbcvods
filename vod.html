@@ -12,6 +12,7 @@
     <h2 id="title"></h2>
     <div id="vodwrapper">
         <figure id="videoContainer">
+            <div id="loading">Loading...</div>
             <video id="vod" preload="auto"></video>
             <div id="video-controls" class="controls">
                 <div id="leftcontrols">
@@ -84,6 +85,7 @@
             if (client.status == 200) {
                 const metadata = JSON.parse(client.responseText);
                 document.getElementById("title").innerText = metadata.title;
+                document.getElementById("title").title = metadata.title;
                 document.title = metadata.title + " - HBC Twitch VOD backups"
     
                 currentChunk = Math.ceil(timestamp / chunklen)
@@ -324,14 +326,24 @@
     function skipto(time) {
         progressfull.style.width = (time / length) * 100 + "%"
         //console.log("skipto", time)
-        loadingnext = false
         //document.getElementById("vodload").src = null
         let ch = Math.ceil(time / chunklen)
-        if (ch != currentChunk) {
+        if (ch < 1) {
+            ch = 1
+        }
+        if (ch == currentChunk + 1 && nextchunk) {
+            console.log("skipped to next chunk")
+            currentChunk = ch
+            video.src = nextchunk
+            video.currentTime = time - (currentChunk - 1) * chunklen
+            nextchunk = false
+            loadingnext = false
+        } else if (ch != currentChunk) {
             currentChunk = ch
             video.src = vodurl + currentChunk + ".mp4"
             video.currentTime = time - (currentChunk - 1) * chunklen
             nextchunk = false
+            loadingnext = false
         } else {
             video.currentTime = time - (currentChunk - 1) * chunklen
         }
