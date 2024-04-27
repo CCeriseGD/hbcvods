@@ -87,6 +87,11 @@
                 document.getElementById("title").innerText = metadata.title;
                 document.getElementById("title").title = metadata.title;
                 document.title = metadata.title + " - HBC Twitch VOD backups"
+
+                if (metadata.chlen) {
+                    chunklen = metadata.chlen
+                }
+                console.log(chunklen)
     
                 currentChunk = Math.ceil(timestamp / chunklen)
                 if (currentChunk < 1) {
