@@ -24,6 +24,7 @@
                     <div id="progress-empty">
                         <div id="progress-full">
                             <div id="cicle"></div>
+                            <div id="hovertime" style="opacity: 0">--:--:--</div>
                         </div>
                     </div>
                 </div>
@@ -284,6 +285,26 @@
       progress.setAttribute("max", video.duration);
     });*/
 
+    function sethovertime(seconds) {
+        let string = ""
+        const hours = Math.floor(seconds / 3600)
+        let displaySeconds = seconds - hours * 3600
+        const minutes = Math.floor(displaySeconds / 60)
+        displaySeconds = displaySeconds - minutes * 60
+        if (hours > 0) {
+            string = string + hours + ":"
+            if (minutes < 10) {
+                string = string + 0
+            }
+        }
+        string = string + minutes + ":"
+        if (displaySeconds < 10) {
+            string = string + 0
+        }
+        string = string + Math.floor(displaySeconds)
+        document.getElementById("hovertime").innerText = string
+    }
+
     video.addEventListener("timeupdate", () => {
         progressfull.style.width = (video.currentTime + (currentChunk - 1) * chunklen) / length * 100 + "%"
         //console.log("timeupdate", (video.currentTime + (currentChunk - 1) * 3600))
@@ -306,6 +327,7 @@
         string = string + Math.floor(displaySeconds)
 
         document.getElementById("time").innerText = string
+        sethovertime(seconds)
 
 
         let ch = Math.ceil(seconds / chunklen)
@@ -343,44 +365,68 @@
         }
     })*/
 
-    function skipto(time) {
+    function skipto(time, dontmove) {
         progressfull.style.width = (time / length) * 100 + "%"
+        sethovertime(time)
+        let string = ""
+        const seconds = time
+        const hours = Math.floor(seconds / 3600)
+        let displaySeconds = seconds - hours * 3600
+        const minutes = Math.floor(displaySeconds / 60)
+        displaySeconds = displaySeconds - minutes * 60
+        if (hours > 0) {
+            string = string + hours + ":"
+            if (minutes < 10) {
+                string = string + 0
+            }
+        }
+        string = string + minutes + ":"
+        if (displaySeconds < 10) {
+            string = string + 0
+        }
+        string = string + Math.floor(displaySeconds)
+        document.getElementById("time").innerText = string
+
         //console.log("skipto", time)
         //document.getElementById("vodload").src = null
-        let ch = Math.ceil(time / chunklen)
-        if (ch < 1) {
-            ch = 1
-        }
-        if (ch == currentChunk + 1 && nextchunk) {
-            console.log("skipped to next chunk")
-            currentChunk = ch
-            video.src = nextchunk
-            video.currentTime = time - (currentChunk - 1) * chunklen
-            nextchunk = false
-            loadingnext = false
-        } else if (ch != currentChunk) {
-            currentChunk = ch
-            video.src = vodurl + currentChunk + ".mp4"
-            video.currentTime = time - (currentChunk - 1) * chunklen
-            nextchunk = false
-            loadingnext = false
-        } else {
-            video.currentTime = time - (currentChunk - 1) * chunklen
+        if (!dontmove) {
+            getchat(Math.floor(time))
+            let ch = Math.ceil(time / chunklen)
+            if (ch < 1) {
+                ch = 1
+            }
+            if (ch == currentChunk + 1 && nextchunk) {
+                console.log("skipped to next chunk")
+                currentChunk = ch
+                video.src = nextchunk
+                video.currentTime = time - (currentChunk - 1) * chunklen
+                nextchunk = false
+                loadingnext = false
+            } else if (ch != currentChunk) {
+                currentChunk = ch
+                video.src = vodurl + currentChunk + ".mp4"
+                video.currentTime = time - (currentChunk - 1) * chunklen
+                nextchunk = false
+                loadingnext = false
+            } else {
+                video.currentTime = time - (currentChunk - 1) * chunklen
+            }
         }
     }
 
     progress.addEventListener("mousedown", (e) => {
       const rect = progress.getBoundingClientRect();
       const pos = (e.pageX - rect.left) / progress.offsetWidth;
-      skipto(pos * length)
+      skipto(pos * length, true)
       video.pause()
       movingbar = true
+      document.getElementById("hovertime").style = "opacity: 1"
     });
     document.addEventListener("mousemove", (e) => {
         if (movingbar) {
           const rect = progress.getBoundingClientRect();
           const pos = (e.pageX - rect.left) / progress.offsetWidth;
-          skipto(pos * length)
+          skipto(pos * length, true)
         }
     });
     document.addEventListener("mouseup", (e) => {
@@ -392,6 +438,7 @@
           if (!paused) {
             video.play()
           }
+          document.getElementById("hovertime").style = "opacity: 0"
         }
     });
 
