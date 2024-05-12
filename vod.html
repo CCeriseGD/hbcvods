@@ -60,7 +60,7 @@
     const highlightsheet = new CSSStyleSheet()
     function messageTimestamp(msgid, seconds) {
         window.history.pushState("object or string", "eeee", "vod.html?v=" + id + "&t=" + seconds + "&hl=" + msgid)
-        highlightsheet.replaceSync("#" + msgid + " {background-color: #35353b}")
+        highlightsheet.replaceSync("#" + msgid + " {background-color: #35353b; box-shadow: 0 0 3px 3px #35353b}")
         //document.getElementById("vod").currentTime = seconds
         skipto(seconds)
     }
@@ -98,7 +98,7 @@
                     currentChunk = 1
                 }
                 document.getElementById("vod").src = vodurl + currentChunk + ".mp4"
-                document.getElementById("vod").currentTime = timestamp;
+                document.getElementById("vod").currentTime = timestamp % chunklen;
 
                 length = metadata.length
                 chunks = Math.ceil(length / chunklen)
@@ -151,7 +151,7 @@
     }
 
     client.send();
-    highlightsheet.replaceSync("#" + hl + " {background-color: #35353b}")
+    highlightsheet.replaceSync("#" + hl + " {background-color: #35353b; box-shadow: 0 0 3px 3px #35353b}")
     document.adoptedStyleSheets = [highlightsheet]
 
     // https://stackoverflow.com/a/28839954
@@ -220,7 +220,7 @@
 
     let paused = video.paused
     let movingbar = false
-    playpause.addEventListener("click", (e) => {
+    function playpausefunc() {
       if (video.paused || video.ended) {
         video.play();
         paused = false
@@ -234,9 +234,19 @@
         playicon.style.display = "inline"
         playpause.setAttribute("hovertext", "Play")
       }
+    }
+    playpause.addEventListener("click", (e) => {
+        if (e.detail != 0) {
+            playpausefunc()
+        }
+    });
+    video.addEventListener("click", (e) => {
+        if (e.detail != 0) {
+            playpausefunc()
+        }
     });
 
-    mute.addEventListener("click", (e) => {
+    function mutefunc() {
         video.muted = !video.muted;
         if (video.muted) {
             unmuteicon.style.display = "inline"
@@ -246,6 +256,11 @@
             unmuteicon.style.display = "none"
             muteicon.style.display = "inline"
             mute.setAttribute("hovertext", "Mute")
+        }
+    }
+    mute.addEventListener("click", (e) => {
+        if (e.detail != 0) {
+            mutefunc()
         }
     });
 /*
@@ -409,17 +424,40 @@
     }
 
     fullscreen.addEventListener("click", (e) => {
-      handleFullscreen();
+        if (e.detail != 0) {
+            handleFullscreen()
+        }
     });
 
     function setTextBack() {
         copytime.setAttribute("hovertext", "Copy Timestamp")
     }
     copytime.addEventListener("click", (e) => {
-        navigator.clipboard.writeText("https://ccerisegd.github.io/hbcvods/vod.html?v=" + id + "&t=" + Math.floor(video.currentTime + (currentChunk - 1) * chunklen))
-        copytime.setAttribute("hovertext", "Copied!")
-        setTimeout(setTextBack, 2000)
+        if (e.detail != 0) {
+            navigator.clipboard.writeText("https://ccerisegd.github.io/hbcvods/vod.html?v=" + id + "&t=" + Math.floor(video.currentTime + (currentChunk - 1) * chunklen))
+            copytime.setAttribute("hovertext", "Copied!")
+            setTimeout(setTextBack, 2000)
+        }
     });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key == "ArrowRight") {
+            skipto(video.currentTime + (currentChunk - 1) * chunklen + 5)
+        } else if (event.key == "ArrowLeft") {
+            skipto(video.currentTime + (currentChunk - 1) * chunklen - 5)
+        } else if (event.key == ".") {
+            skipto(video.currentTime + (currentChunk - 1) * chunklen + 1/30)
+        } else if (event.key == ",") {
+            skipto(video.currentTime + (currentChunk - 1) * chunklen - 1/30)
+        } else if (event.key == " ") {
+            playpausefunc()
+        } else if (event.key.toLowerCase() == "m") {
+            mutefunc()
+        } else if (event.key.toLowerCase() == "f") {
+            handleFullscreen()
+        }
+    });
+
 </script>
 
 </body>
