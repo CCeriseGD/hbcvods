@@ -327,7 +327,7 @@
             video.play()
             nextchunk = null
         }
-        if (Math.floor(seconds) > lastchat) {
+        if (Math.floor(seconds) != lastchat) {
             getchat(Math.floor(seconds))
         }
     });
