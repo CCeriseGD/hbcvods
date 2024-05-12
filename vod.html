@@ -98,7 +98,7 @@
                     currentChunk = 1
                 }
                 document.getElementById("vod").src = vodurl + currentChunk + ".mp4"
-                document.getElementById("vod").currentTime = timestamp % chunklen;
+                document.getElementById("vod").currentTime = timestamp - (currentChunk - 1) * chunklen;
 
                 length = metadata.length
                 chunks = Math.ceil(length / chunklen)
