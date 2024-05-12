@@ -61,7 +61,7 @@
     const highlightsheet = new CSSStyleSheet()
     function messageTimestamp(msgid, seconds) {
         window.history.pushState("object or string", "eeee", "vod.html?v=" + id + "&t=" + seconds + "&hl=" + msgid)
-        highlightsheet.replaceSync("#" + msgid + " {background-color: #35353b; box-shadow: 0 0 3px 3px #35353b}")
+        highlightsheet.replaceSync("[id='" + msgid + "'] {background-color: #35353b; box-shadow: 0 0 3px 3px #35353b}")
         //document.getElementById("vod").currentTime = seconds
         skipto(seconds)
     }
@@ -152,7 +152,7 @@
     }
 
     client.send();
-    highlightsheet.replaceSync("#" + hl + " {background-color: #35353b; box-shadow: 0 0 3px 3px #35353b}")
+    highlightsheet.replaceSync("[id='" + hl + "'] {background-color: #35353b; box-shadow: 0 0 3px 3px #35353b}")
     document.adoptedStyleSheets = [highlightsheet]
 
     // https://stackoverflow.com/a/28839954
