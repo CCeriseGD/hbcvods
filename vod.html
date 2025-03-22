@@ -560,3 +560,32 @@
 
 </body>
 </html>
+<!--
+
+some search stuff
+TODO: put filter function together, rember there can be multiple messages in a second
+
+parser = new DOMParser()
+
+function filter(s) {
+  if (s === "") {return false}
+    
+}
+chatjson.filter(filter)
+
+el = parser.parseFromString(msg, "text/html").body.children[1]
+
+content = ""
+started = false
+for (child of el.childNodes) {
+  if (!started) {
+    if (child.nodeType == 1 && child.style.color !== "") {started = true}
+  } else if (child.nodeType == 3) {
+    content += child.textContent
+  } else {
+    content += child.attributes.hovertext.textContent
+  }
+}
+
+
+-->
